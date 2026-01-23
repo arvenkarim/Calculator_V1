@@ -1,1 +1,5 @@
 Private notizen.java
+.idea
+.mvn
+target
+pom.xml
