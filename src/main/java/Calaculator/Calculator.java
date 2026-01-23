@@ -71,7 +71,7 @@ public class Calculator {
                         continue;
                     }
                     break;
-                case '%':  // ← Hinzugefügt: Modulo
+                case '%':  //
                     if (num2 != 0) {
                         result = modulo(num1, num2);
                         System.out.printf("%.2f %% %.2f = %.2f%n", num1, num2, result);
@@ -96,15 +96,13 @@ public class Calculator {
         }
     }
 
-    // SRP: Jede Operation eigene Methode
     private static double add(double a, double b)     { return a + b; }
     private static double subtract(double a, double b) { return a - b; }
     private static double multiply(double a, double b) { return a * b; }
     private static double divide(double a, double b)   { return a / b; }
-    private static double modulo(double a, double b)   { return a % b; }  // ← Neue Methode für %
+    private static double modulo(double a, double b)   { return a % b; }  //
     private static double power(double a, double b)    { return Math.pow(a, b); }
 
-    // SRP: History-Methoden getrennt
     private static void addToHistory(String calc) {
         history.add(calc);
         if (history.size() > 10) {
@@ -123,7 +121,6 @@ public class Calculator {
         }
     }
 
-    // SRP: Eingabe + Klammern in eigener Methode
     private static double parseInput(String line) {
         line = line.trim();
 
@@ -141,7 +138,7 @@ public class Calculator {
                         case '-': res = subtract(a, b); break;
                         case '*': res = multiply(a, b); break;
                         case '/': res = divide(a, b); break;
-                        case '%': res = modulo(a, b); break;  // ← Hinzugefügt: Modulo in Klammern
+                        case '%': res = modulo(a, b); break;
                         case '^': res = power(a, b); break;
                         default:
                             System.out.println("Invalid operator in bracket");
