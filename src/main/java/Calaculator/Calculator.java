@@ -10,7 +10,7 @@ public class Calculator {
         Scanner input = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nEnter The Operator (+, -, *, /, ^) or h for history or q to quit");
+            System.out.println("\nEnter The Operator (+, -, *, /, %, ^) or h for history or q to quit");
             String opLine = input.nextLine();
 
             if (opLine.equalsIgnoreCase("q")) {
@@ -71,6 +71,16 @@ public class Calculator {
                         continue;
                     }
                     break;
+                case '%':  // ← Hinzugefügt: Modulo
+                    if (num2 != 0) {
+                        result = modulo(num1, num2);
+                        System.out.printf("%.2f %% %.2f = %.2f%n", num1, num2, result);
+                        calculation = String.format("%.2f %% %.2f = %.2f", num1, num2, result);
+                    } else {
+                        System.out.println("Cannot modulo by zero");
+                        continue;
+                    }
+                    break;
                 case '^':
                     result = power(num1, num2);
                     System.out.println(result);
@@ -82,17 +92,17 @@ public class Calculator {
             }
 
             addToHistory(calculation);
-
             System.out.println("Do you Want to make more Calculations");
         }
     }
 
     // SRP: Jede Operation eigene Methode
-    private static double add(double a, double b) { return a + b; }
+    private static double add(double a, double b)     { return a + b; }
     private static double subtract(double a, double b) { return a - b; }
     private static double multiply(double a, double b) { return a * b; }
-    private static double divide(double a, double b) { return a / b; }
-    private static double power(double a, double b) { return Math.pow(a, b); }
+    private static double divide(double a, double b)   { return a / b; }
+    private static double modulo(double a, double b)   { return a % b; }  // ← Neue Methode für %
+    private static double power(double a, double b)    { return Math.pow(a, b); }
 
     // SRP: History-Methoden getrennt
     private static void addToHistory(String calc) {
@@ -131,6 +141,7 @@ public class Calculator {
                         case '-': res = subtract(a, b); break;
                         case '*': res = multiply(a, b); break;
                         case '/': res = divide(a, b); break;
+                        case '%': res = modulo(a, b); break;  // ← Hinzugefügt: Modulo in Klammern
                         case '^': res = power(a, b); break;
                         default:
                             System.out.println("Invalid operator in bracket");
