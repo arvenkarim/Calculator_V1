@@ -3,15 +3,29 @@ package Calaculator;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Einfacher Taschenrechner für die Quest.
+ * Unterstützt +, -, *, /, %, ^, einfache Klammern und History der letzten 10 Berechnungen.
+ *
+ * @author Said Arven Karim
+ * @version 1.0
+ */
 public class Calculator {
+
+    /** Speichert die letzten 10 Berechnungen. */
     private static ArrayList<String> history = new ArrayList<>();
 
+    /**
+     * Startet den Taschenrechner.
+     *
+     * @param args nicht verwendet
+     */
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
         while (true) {
             System.out.println("\nEnter The Operator (+, -, *, /, %, ^) or h for history or q to quit");
-            String opLine = input.nextLine();
+            String opLine = input.nextLine().trim();
 
             if (opLine.equalsIgnoreCase("q")) {
                 input.close();
@@ -24,25 +38,22 @@ public class Calculator {
                 continue;
             }
 
-            char operator;
-            try {
-                operator = opLine.charAt(0);
-            } catch (Exception e) {
+            if (opLine.length() != 1) {
                 System.out.println("Invalid operator");
                 continue;
             }
 
+            char operator = opLine.charAt(0);
+
             System.out.println("Enter the two numbers one by one (or (3 + 4) for brackets)");
 
-            String line1 = input.nextLine();
-            double num1 = parseInput(line1);
+            double num1 = parseInput(input.nextLine());
             if (Double.isNaN(num1)) continue;
 
-            String line2 = input.nextLine();
-            double num2 = parseInput(line2);
+            double num2 = parseInput(input.nextLine());
             if (Double.isNaN(num2)) continue;
 
-            String calculation;
+            String calculation = "";
             double result = 0;
 
             switch (operator) {
@@ -71,7 +82,7 @@ public class Calculator {
                         continue;
                     }
                     break;
-                case '%':  //
+                case '%':
                     if (num2 != 0) {
                         result = modulo(num1, num2);
                         System.out.printf("%.2f %% %.2f = %.2f%n", num1, num2, result);
@@ -96,13 +107,25 @@ public class Calculator {
         }
     }
 
-    private static double add(double a, double b)     { return a + b; }
-    private static double subtract(double a, double b) { return a - b; }
-    private static double multiply(double a, double b) { return a * b; }
-    private static double divide(double a, double b)   { return a / b; }
-    private static double modulo(double a, double b)   { return a % b; }  //
-    private static double power(double a, double b)    { return Math.pow(a, b); }
+    /** Addiert zwei Zahlen. */
+    private static double add(double a, double b) { return a + b; }
 
+    /** Subtrahiert zwei Zahlen. */
+    private static double subtract(double a, double b) { return a - b; }
+
+    /** Multipliziert zwei Zahlen. */
+    private static double multiply(double a, double b) { return a * b; }
+
+    /** Dividiert zwei Zahlen. */
+    private static double divide(double a, double b) { return a / b; }
+
+    /** Berechnet Modulo. */
+    private static double modulo(double a, double b) { return a % b; }
+
+    /** Berechnet Potenz. */
+    private static double power(double a, double b) { return Math.pow(a, b); }
+
+    /** Fügt Berechnung zur History hinzu. */
     private static void addToHistory(String calc) {
         history.add(calc);
         if (history.size() > 10) {
@@ -110,6 +133,7 @@ public class Calculator {
         }
     }
 
+    /** Zeigt History an. */
     private static void showHistory() {
         if (history.isEmpty()) {
             System.out.println("No history yet");
@@ -121,6 +145,7 @@ public class Calculator {
         }
     }
 
+    /** Parst Eingabe (Zahl oder Klammer). */
     private static double parseInput(String line) {
         line = line.trim();
 
