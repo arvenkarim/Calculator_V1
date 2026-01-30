@@ -3,34 +3,28 @@ package Calaculator;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/**
- * Einfacher Taschenrechner für die Quest.
- * Unterstützt +, -, *, /, %, ^, einfache Klammern und History der letzten 10 Berechnungen.
- *
- * @author Said Arven Karim
- * @version 1.0
- */
 public class Calculator {
 
-    /** Speichert die letzten 10 Berechnungen. */
-    private static ArrayList<String> history = new ArrayList<>();
+    /** Speichert die letzten 10 Berechnungen */
+    private ArrayList<String> history = new ArrayList<>();
 
-    /**
-     * Startet den Taschenrechner.
-     *
-     * @param args nicht verwendet
-     */
+    /** Einstiegspunkt */
     public static void main(String[] args) {
+        Calculator calculator = new Calculator();
+        calculator.run();
+    }
+
+    /** Startet den Taschenrechner */
+    public void run() {
         Scanner input = new Scanner(System.in);
 
         while (true) {
-            System.out.println("\nEnter The Operator (+, -, *, /, %, ^) or h for history or q to quit");
+            System.out.println("\nEnter operator (+, -, *, /, %, ^) or h for history or q to quit");
             String opLine = input.nextLine().trim();
 
             if (opLine.equalsIgnoreCase("q")) {
-                input.close();
                 System.out.println("Bye!");
-                return;
+                break;
             }
 
             if (opLine.equalsIgnoreCase("h")) {
@@ -45,141 +39,91 @@ public class Calculator {
 
             char operator = opLine.charAt(0);
 
-            System.out.println("Enter the two numbers one by one (or (3 + 4) for brackets)");
-
+            System.out.println("Enter first number:");
             double num1 = parseInput(input.nextLine());
             if (Double.isNaN(num1)) continue;
 
+            System.out.println("Enter second number:");
             double num2 = parseInput(input.nextLine());
             if (Double.isNaN(num2)) continue;
 
-            String calculation = "";
-            double result = 0;
+            double result;
+            String calculation;
 
             switch (operator) {
                 case '+':
                     result = add(num1, num2);
-                    System.out.printf("%.2f + %.2f = %.2f%n", num1, num2, result);
-                    calculation = String.format("%.2f + %.2f = %.2f", num1, num2, result);
                     break;
                 case '-':
                     result = subtract(num1, num2);
-                    System.out.printf("%.2f - %.2f = %.2f%n", num1, num2, result);
-                    calculation = String.format("%.2f - %.2f = %.2f", num1, num2, result);
                     break;
                 case '*':
                     result = multiply(num1, num2);
-                    System.out.printf("%.2f * %.2f = %.2f%n", num1, num2, result);
-                    calculation = String.format("%.2f * %.2f = %.2f", num1, num2, result);
                     break;
                 case '/':
-                    if (num2 != 0) {
-                        result = divide(num1, num2);
-                        System.out.printf("%.2f / %.2f = %.2f%n", num1, num2, result);
-                        calculation = String.format("%.2f / %.2f = %.2f", num1, num2, result);
-                    } else {
+                    if (num2 == 0) {
                         System.out.println("Cannot divide by zero");
                         continue;
                     }
+                    result = divide(num1, num2);
                     break;
                 case '%':
-                    if (num2 != 0) {
-                        result = modulo(num1, num2);
-                        System.out.printf("%.2f %% %.2f = %.2f%n", num1, num2, result);
-                        calculation = String.format("%.2f %% %.2f = %.2f", num1, num2, result);
-                    } else {
+                    if (num2 == 0) {
                         System.out.println("Cannot modulo by zero");
                         continue;
                     }
+                    result = modulo(num1, num2);
                     break;
                 case '^':
                     result = power(num1, num2);
-                    System.out.println(result);
-                    calculation = String.format("%.2f ^ %.2f = %.2f", num1, num2, result);
                     break;
                 default:
-                    System.out.printf("%c is an invalid operator%n", operator);
+                    System.out.println("Invalid operator");
                     continue;
             }
 
+            calculation = num1 + " " + operator + " " + num2 + " = " + result;
+            System.out.println(calculation);
             addToHistory(calculation);
-            System.out.println("Do you Want to make more Calculations");
         }
+
+        input.close();
     }
 
-    /** Addiert zwei Zahlen. */
-    private static double add(double a, double b) { return a + b; }
+    // ===== Rechenmethoden (NICHT static) =====
 
-    /** Subtrahiert zwei Zahlen. */
-    private static double subtract(double a, double b) { return a - b; }
+    private double add(double a, double b) { return a + b; }
+    private double subtract(double a, double b) { return a - b; }
+    private double multiply(double a, double b) { return a * b; }
+    private double divide(double a, double b) { return a / b; }
+    private double modulo(double a, double b) { return a % b; }
+    private double power(double a, double b) { return Math.pow(a, b); }
 
-    /** Multipliziert zwei Zahlen. */
-    private static double multiply(double a, double b) { return a * b; }
+    // ===== History =====
 
-    /** Dividiert zwei Zahlen. */
-    private static double divide(double a, double b) { return a / b; }
-
-    /** Berechnet Modulo. */
-    private static double modulo(double a, double b) { return a % b; }
-
-    /** Berechnet Potenz. */
-    private static double power(double a, double b) { return Math.pow(a, b); }
-
-    /** Fügt Berechnung zur History hinzu. */
-    private static void addToHistory(String calc) {
+    private void addToHistory(String calc) {
         history.add(calc);
         if (history.size() > 10) {
             history.remove(0);
         }
     }
 
-    /** Zeigt History an. */
-    private static void showHistory() {
+    private void showHistory() {
         if (history.isEmpty()) {
             System.out.println("No history yet");
-        } else {
-            System.out.println("Last 10 calculations:");
-            for (int i = history.size() - 1; i >= 0; i--) {
-                System.out.println(history.get(i));
-            }
+            return;
+        }
+        System.out.println("Last calculations:");
+        for (int i = history.size() - 1; i >= 0; i--) {
+            System.out.println(history.get(i));
         }
     }
 
-    /** Parst Eingabe (Zahl oder Klammer). */
-    private static double parseInput(String line) {
-        line = line.trim();
+    // ===== Input =====
 
-        if (line.startsWith("(") && line.endsWith(")")) {
-            String inside = line.substring(1, line.length() - 1).trim();
-            String[] parts = inside.split(" ");
-            if (parts.length == 3) {
-                try {
-                    double a = Double.parseDouble(parts[0]);
-                    char op = parts[1].charAt(0);
-                    double b = Double.parseDouble(parts[2]);
-                    double res = 0;
-                    switch (op) {
-                        case '+': res = add(a, b); break;
-                        case '-': res = subtract(a, b); break;
-                        case '*': res = multiply(a, b); break;
-                        case '/': res = divide(a, b); break;
-                        case '%': res = modulo(a, b); break;
-                        case '^': res = power(a, b); break;
-                        default:
-                            System.out.println("Invalid operator in bracket");
-                            return Double.NaN;
-                    }
-                    System.out.println("Bracket result: " + res);
-                    return res;
-                } catch (Exception e) {
-                    System.out.println("Invalid bracket");
-                    return Double.NaN;
-                }
-            }
-        }
-
+    private double parseInput(String line) {
         try {
-            return Double.parseDouble(line);
+            return Double.parseDouble(line.trim());
         } catch (Exception e) {
             System.out.println("Invalid number");
             return Double.NaN;
