@@ -3,19 +3,41 @@ package Calaculator;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Einfacher Konsolen-Taschenrechner.
+ * <p>
+ * Der Calculator nutzt für jede Rechenart eine eigene Klasse
+ * (z. B. Add, Subtract, Multiply, usw.).
+ * Er unterstützt die Operatoren +, -, *, /, % und ^ sowie
+ * eine einfache History der letzten 10 Berechnungen.
+ * </p>
+ *
+ * @author Said Arven Karim
+ * @version 1.0
+ */
 public class Calculator {
 
+    /** Speichert die letzten 10 Berechnungen */
     private ArrayList<String> history = new ArrayList<>();
 
+    /**
+     * Einstiegspunkt des Programms.
+     *
+     * @param args Programmargumente (werden nicht verwendet)
+     */
     public static void main(String[] args) {
         Calculator calculator = new Calculator();
         calculator.run();
     }
 
+    /**
+     * Startet die Hauptlogik des Taschenrechners
+     * und verarbeitet die Benutzereingaben.
+     */
     public void run() {
         Scanner input = new Scanner(System.in);
 
-        // Operator-Klassen
+        // Erzeugen der Operator-Klassen
         Add add = new Add();
         Subtract subtract = new Subtract();
         Multiply multiply = new Multiply();
@@ -95,6 +117,12 @@ public class Calculator {
         input.close();
     }
 
+    /**
+     * Wandelt einen String in eine Zahl um.
+     *
+     * @param input Eingabe des Benutzers
+     * @return die geparste Zahl oder Double.NaN bei ungültiger Eingabe
+     */
     private double parseNumber(String input) {
         try {
             return Double.parseDouble(input.trim());
@@ -104,6 +132,12 @@ public class Calculator {
         }
     }
 
+    /**
+     * Fügt eine Berechnung zur History hinzu.
+     * Es werden maximal die letzten 10 Einträge gespeichert.
+     *
+     * @param calculation Berechnung als String
+     */
     private void addToHistory(String calculation) {
         history.add(calculation);
         if (history.size() > 10) {
@@ -111,6 +145,9 @@ public class Calculator {
         }
     }
 
+    /**
+     * Gibt die gespeicherten Berechnungen aus.
+     */
     private void showHistory() {
         if (history.isEmpty()) {
             System.out.println("No history yet");
