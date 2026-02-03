@@ -5,11 +5,11 @@ import Calaculator.operation.AbstractOperation;
 public class Multiply extends AbstractOperation {
 
   public Multiply() {
-    super("*");
+    super('*');
   }
 
   @Override
-  public double calculate(double intA, double intB) {
-    return intA * intB;
+  public double calculate(double a, double b) {
+    return a * b;
   }
 }

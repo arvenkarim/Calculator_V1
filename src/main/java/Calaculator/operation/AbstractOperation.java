@@ -11,5 +11,5 @@ public abstract class AbstractOperation {
     return this.operation;
   }
 
-  public abstract double calculate(double intA, double intB);
+  public abstract double calculate(double a, double b);
 }

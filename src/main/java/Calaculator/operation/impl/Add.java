@@ -4,11 +4,11 @@ import Calaculator.operation.AbstractOperation;
 
 public class Add extends AbstractOperation {
   public Add() {
-    super("+");
+    super('+');
   }
 
   @Override
-  public double calculate(double intA, double intB) {
-    return intA + intB;
+  public double calculate(double a, double b) {
+    return a + b;
   }
 }

@@ -1,11 +1,12 @@
 package Calaculator;
 
+import Calaculator.command.Command;
 import Calaculator.operation.AbstractOperation;
-import Calaculator.operation.impl.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 /**
  * Einfacher Konsolen-Taschenrechner.
@@ -21,30 +22,14 @@ import java.util.Scanner;
  */
 public class Calculator {
 
-  /** Speichert die letzten 10 Berechnungen */
-  private final ArrayList<String> history = new ArrayList<>();
   private final List<AbstractOperation> operations;
+  private final List<Command> commands;
+  private final CalculationHistory history;
 
-  public Calculator(List<AbstractOperation> operations) {
+  public Calculator(List<AbstractOperation> operations, List<Command> commands, CalculationHistory history) {
     this.operations = operations;
-  }
-
-  /**
-   * Einstiegspunkt des Programms.
-   *
-   * @param args Programmargumente (werden nicht verwendet)
-   */
-  public static void main(String[] args) {
-    List<AbstractOperation> operations = List.of(
-      new Add(),
-      new Divide(),
-      new Modulo(),
-      new Multiply(),
-      new Power(),
-      new Subtract()
-    );
-    Calculator calculator = new Calculator(operations);
-    calculator.run();
+    this.commands = commands;
+    this.history = history;
   }
 
   /**
@@ -55,21 +40,26 @@ public class Calculator {
     Scanner input = new Scanner(System.in);
 
     while (true) {
-      System.out.println("\nEnter operator (+, -, *, /, %, ^) or h for history or q to quit");
+      System.out.println("\nEnter operator (" + getAvailableOperators() + ") or command (" + getAvailableCommands() + ")");
       String opLine = input.nextLine().trim();
 
-      if (opLine.equalsIgnoreCase("q")) {
-        System.out.println("Bye!");
-        break;
-      }
-
-      if (opLine.equalsIgnoreCase("h")) {
-        showHistory();
+      if (opLine.length() != 1) {
+        System.out.println("Invalid input");
         continue;
       }
 
-      if (opLine.length() != 1) {
-        System.out.println("Invalid operator");
+      char inputChar = Character.toLowerCase(opLine.charAt(0));
+
+      // Check if input matches a command
+      Optional<Command> command = commands.stream()
+        .filter(cmd -> cmd.getKey() == inputChar)
+        .findFirst();
+
+      if (command.isPresent()) {
+        boolean shouldExit = command.get().execute();
+        if (shouldExit) {
+          break;
+        }
         continue;
       }
 
@@ -83,18 +73,22 @@ public class Calculator {
       double num2 = parseNumber(input.nextLine());
       if (Double.isNaN(num2)) continue;
 
-      String calculation;
-
       AbstractOperation executor = operations.stream()
         .filter(abstractOperation -> abstractOperation.getOperation() == operator)
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Operation not implemented"));
 
-      double result = executor.calculate(num1, num2);
+      double result;
+      try {
+        result = executor.calculate(num1, num2);
+      } catch (ArithmeticException e) {
+        System.out.println("Error: " + e.getMessage());
+        continue;
+      }
 
-      calculation = num1 + " " + operator + " " + num2 + " = " + result;
+      String calculation = num1 + " " + operator + " " + num2 + " = " + result;
       System.out.println(calculation);
-      addToHistory(calculation);
+      history.add(calculation);
     }
 
     input.close();
@@ -109,37 +103,31 @@ public class Calculator {
   private double parseNumber(String input) {
     try {
       return Double.parseDouble(input.trim());
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
       System.out.println("Invalid number");
       return Double.NaN;
     }
   }
 
   /**
-   * Fügt eine Berechnung zur History hinzu.
-   * Es werden maximal die letzten 10 Einträge gespeichert.
+   * Gibt die verfügbaren Operatoren als kommagetrennten String zurück.
    *
-   * @param calculation Berechnung als String
+   * @return String mit allen verfügbaren Operatoren
    */
-  private void addToHistory(String calculation) {
-    history.add(calculation);
-    if (history.size() > 10) {
-      history.removeFirst();
-    }
+  private String getAvailableOperators() {
+    return operations.stream()
+      .map(op -> String.valueOf(op.getOperation()))
+      .collect(Collectors.joining(", "));
   }
 
   /**
-   * Gibt die gespeicherten Berechnungen aus.
+   * Gibt die verfügbaren Commands als kommagetrennten String zurück.
+   *
+   * @return String mit allen verfügbaren Commands
    */
-  private void showHistory() {
-    if (history.isEmpty()) {
-      System.out.println("No history yet");
-      return;
-    }
-
-    System.out.println("Last calculations:");
-    for (int i = history.size() - 1; i >= 0; i--) {
-      System.out.println(history.get(i));
-    }
+  private String getAvailableCommands() {
+    return commands.stream()
+      .map(cmd -> String.valueOf(cmd.getKey()))
+      .collect(Collectors.joining(", "));
   }
 }

@@ -5,11 +5,14 @@ import Calaculator.operation.AbstractOperation;
 public class Modulo extends AbstractOperation {
 
   public Modulo() {
-    super("%");
+    super('%');
   }
 
   @Override
-  public double calculate(double intA, double intB) {
-    return intA % intB;
+  public double calculate(double a, double b) {
+    if (b == 0) {
+      throw new ArithmeticException("Cannot calculate modulo by zero");
+    }
+    return a % b;
   }
 }

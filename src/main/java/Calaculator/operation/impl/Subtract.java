@@ -5,11 +5,11 @@ import Calaculator.operation.AbstractOperation;
 public class Subtract extends AbstractOperation {
 
   public Subtract() {
-    super("-");
+    super('-');
   }
 
   @Override
-  public double calculate(double intA, double intB) {
-    return intA - intB;
+  public double calculate(double a, double b) {
+    return a - b;
   }
 }

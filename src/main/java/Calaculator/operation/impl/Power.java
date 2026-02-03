@@ -5,11 +5,11 @@ import Calaculator.operation.AbstractOperation;
 public class Power extends AbstractOperation {
 
   public Power(){
-    super("^");
+    super('^');
   }
 
   @Override
-  public double calculate(double intA, double intB) {
-    return Math.pow(intA, intB);
+  public double calculate(double a, double b) {
+    return Math.pow(a, b);
   }
 }
