@@ -22,7 +22,8 @@ public class Main {
       new Multiply(),
       new Divide(),
       new Modulo(),
-      new Power()
+      new Power(),
+      new Root()
     );
 
     List<Command> commands = List.of(
